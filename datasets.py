@@ -2,10 +2,11 @@ import os
 import cv2
 import torch
 import pandas as pd
-from torch.utils.data import Dataset
 import numpy as np
+from torch.utils.data import Dataset
 
-class VOCDataset(Dataset):
+
+class CatDogDataset(Dataset):
     def __init__(self, file_csv, classes, image_size = 224, is_training = True):
         full_data = pd.read_csv(file_csv)
         _id = full_data['id']

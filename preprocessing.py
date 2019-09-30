@@ -46,3 +46,4 @@ def split_test_train_file(csv_file):
 dataframe = preprocessing()
 create_full_csv(dataframe)
 split_test_train_file('database/training/data.csv')
+

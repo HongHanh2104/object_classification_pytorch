@@ -5,8 +5,8 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
 import torch.nn as nn
+from datasets import CatDogDataset
 from model import VGG16Feature
-from datasets import VOCDataset
 
 
 argparser = argparse.ArgumentParser(
@@ -45,14 +45,14 @@ def main(args):
     best_epoch = 0
 
     # Load dataset
-    training_set = VOCDataset(file_csv = train_dataset_csv, classes = classes)
+    training_set = CatDogDataset(file_csv = train_dataset_csv, classes = classes)
     training_loader = DataLoader(training_set,
                                  batch_size = batch_size,
                                  shuffle = True,
                                  drop_last = True,
                                  num_workers = workers)                        
 
-    testing_set = VOCDataset(file_csv = val_dataset_csv, classes = classes)
+    testing_set = CatDogDataset(file_csv = val_dataset_csv, classes = classes)
     testing_loader = DataLoader(testing_set,
                                 batch_size = batch_size,
                                 shuffle = False,
