@@ -7,7 +7,7 @@ I download dataset from:  https://www.kaggle.com/c/dogs-vs-cats/data and store i
 
 My folder like below:
 
-    ____Objetc_Classification                     # includes .py files
+    ____Objetc_Classification                 # includes .py files
 
       |______database                         # includes images and csv
       
