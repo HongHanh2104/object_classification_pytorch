@@ -114,10 +114,10 @@ def main(args):
             for i, batch in enumerate(testing_loader, 0):
                 images, labels = batch
                 num_label = len(labels)
-                
+                '''
                 if torch.cuda.is_available():
                     images = images.cuda()
-                
+                '''
                 images = images.to(dev)
                 labels = labels.to(dev)
 
