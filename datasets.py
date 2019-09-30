@@ -3,7 +3,7 @@ import cv2
 import torch
 import pandas as pd
 from torch.utils.data import Dataset
-from utils import *
+import numpy as np
 
 class VOCDataset(Dataset):
     def __init__(self, file_csv, classes, image_size = 224, is_training = True):

@@ -24,6 +24,8 @@ def main(args):
     with open(config_path) as config_buffer:
         config = json.loads(config_buffer.read())
 
+    dev = torch.device('cuda:{}'.format(0) if torch.cuda.is_available() else 'cpu')
+
     classes = config['model']['labels']
     batch_size = config['train']['batch_size']
     epochs = config['train']['epochs']
@@ -60,6 +62,7 @@ def main(args):
 
     # Load VGG16 model 
     vgg16 = VGG16Feature()
+    vgg16.to(dev)
     
     # Loss 
     criterion = nn.CrossEntropyLoss()
@@ -73,10 +76,15 @@ def main(args):
     for epoch in range(epochs):
         for i, batch in enumerate(training_loader, 0):
             images, labels = batch
+            '''
             if torch.cuda.is_available():
                 images = Variable(images.cuda(), requires_grad = True)
             else:
                 images = Variable(images, requires_grad = True)
+            '''
+            images = images.to(dev)
+            labels = labels.to(dev)
+
             optimizer.zero_grad()
             # Forward
             outputs = vgg16(images)
@@ -85,8 +93,8 @@ def main(args):
             #print(outputs)
             
             loss = criterion(outputs, labels)
-            #print(loss)
-            
+            print(loss)
+        
             # Backward 
             loss.backward()
             optimizer.step()
@@ -106,8 +114,13 @@ def main(args):
             for i, batch in enumerate(testing_loader, 0):
                 images, labels = batch
                 num_label = len(labels)
+                
                 if torch.cuda.is_available():
                     images = images.cuda()
+                
+                images = images.to(dev)
+                labels = labels.to(dev)
+
                 with torch.no_grad():
                     outputs = vgg16(images)
                     loss = criterion(outputs, labels)
