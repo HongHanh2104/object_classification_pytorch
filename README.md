@@ -21,7 +21,9 @@ create folder like me, you do not care about it. In contrast, please change thes
 
 After running this file, you will get 3 csv file in training folder:
     * data.csv            # store full dataset with id: name of the image, label is 1 - cat; 0 - dog
+    
     * train_labels.csv    # store training dataset
+    
     * test_labels.csv     # store testing dataset
 
 # 3. Train
