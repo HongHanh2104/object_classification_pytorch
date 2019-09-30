@@ -35,7 +35,7 @@ def xml_to_csv(path):
 
 def split_test_train_file(csv_file):
     full_labels = pd.read_csv(csv_file)
-    gb = full_labels.groupby('filename')
+    gb = full_labels.groupby('id')
     grouped_list = [gb.get_group(x) for x in gb.groups]
     n = len(grouped_list)
     train_index = np.random.choice(n, size = 3980, replace = False)
@@ -57,6 +57,6 @@ def main():
     print('Successfully converted xml to csv.')
     '''
     # Then split into train and test file
-    split_test_train_file("database/training/labels.csv")
+    split_test_train_file("database/training/dog_cat.csv")
 
 main()

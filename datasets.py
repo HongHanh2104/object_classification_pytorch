@@ -1,50 +1,33 @@
-import json
 import os
 import cv2
 import torch
+import pandas as pd
 from torch.utils.data import Dataset
-import xml.etree.ElementTree as ET
 from utils import *
 
 class VOCDataset(Dataset):
-    def __init__(self, classes, image_size = 224, is_training = True):
-        id_list_path = "database/training/Main/train.txt"
-        self.ids = [id.strip() for id in open(id_list_path)]
+    def __init__(self, file_csv, classes, image_size = 224, is_training = True):
+        full_data = pd.read_csv(file_csv)
+        _id = full_data['id']
+        _label = full_data['label']
+        self.id = np.array(_id)
+        self.label = np.array(_label)
         self.classes = classes
         self.image_size = image_size
         self.num_classes = len(self.classes)
-        self.num_images = len(self.ids)
         self.is_training = is_training
-
+    
     def __getitem__(self, index):
-        id = self.ids[index]
-        image_path = os.path.join("database/images", "{}.jpg".format(id))
+        _id = self.id[index]
+        image_path = os.path.join("database/images/", "{}.jpg".format(_id))
         image = cv2.imread(image_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image_xml_path = os.path.join("database/annotations", "{}.xml".format(id))
-        annot = ET.parse(image_xml_path)
-        
-        objects = []
-        for obj in annot.findall('object'):
-            xmin, xmax, ymin, ymax = [int(obj.find('bndbox').find(tag).text) - 1 for tag in 
-                                    ["xmin", "xmax", "ymin", "ymax"]]
-            label = self.classes.index(obj.find('name').text.lower().strip())
-            objects.append([xmin, ymin, xmax, ymax, label])
-        
-        if self.is_training:
-            transformation = Compose([VerticalFlip(), Crop(), Resize(self.image_size)])
-        else:
-            transformations = Compose([Resize(self.image_size)])
-
-        image, objects = transformation((image, objects))
-        #return image, objects
-        return np.transpose(np.array(image, dtype = np.float32), (2, 0, 1)), np.array(objects, dtype = np.float32)
-        
+        image = cv2.resize(image, (224, 224))
+        return np.transpose(np.array(image, dtype=np.float32), (2, 0, 1)), np.array(self.label[index], dtype = np.long)
 
     def __len__(self):
-        return self.num_images
+        return len(self.id)
 
-classes = ['aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow',
-                        'diningtable', 'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train',
-                        'tvmonitor']
-VOCDataset(classes = classes).__getitem__(1)
+
+#classes = ['dog', 'cat']
+#VOCDataset(file_csv = 'database/training/train_labels.csv', classes = classes).__getitem__(1)

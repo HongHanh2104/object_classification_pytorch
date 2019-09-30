@@ -7,7 +7,6 @@ from torch.autograd import Variable
 import torch.nn as nn
 from model import VGG16Feature
 from datasets import VOCDataset
-from utils import custom_collate_fn
 
 
 argparser = argparse.ArgumentParser(
@@ -44,18 +43,18 @@ def main(args):
     best_epoch = 0
 
     # Load dataset
-    training_set = VOCDataset(classes)
+    training_set = VOCDataset(file_csv = train_dataset_csv, classes = classes)
     training_loader = DataLoader(training_set,
                                  batch_size = batch_size,
                                  shuffle = True,
                                  drop_last = True,
                                  num_workers = workers)                        
 
-    testing_set = VOCDataset(classes)
+    testing_set = VOCDataset(file_csv = val_dataset_csv, classes = classes)
     testing_loader = DataLoader(testing_set,
                                 batch_size = batch_size,
                                 shuffle = False,
-                                drop_last = True,
+                                drop_last = False,
                                 num_workers = workers)
 
 
@@ -81,12 +80,13 @@ def main(args):
             optimizer.zero_grad()
             # Forward
             outputs = vgg16(images)
-            print(labels)
+            #print(images)
 
             #print(outputs)
-            '''
+            
             loss = criterion(outputs, labels)
-
+            #print(loss)
+            
             # Backward 
             loss.backward()
             optimizer.step()
@@ -131,7 +131,7 @@ def main(args):
             if epoch - best_epoch > early_stopping_patience:
                 print("Stop training at epoch {}. The lowest loss achieved is {}".format(epoch, avg_loss))
                 break
-        '''
+        
 
 if __name__ == '__main__':
     args = argparser.parse_args()
